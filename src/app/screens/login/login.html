@@ -1,0 +1,30 @@
+<div class="row-cols-1 row-cols-md-2 row-cols-xl-4 m-3">
+  <h2>Login</h2>
+
+  <form class="d-flex flex-column gap-2" [formGroup]="formGroup">
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput placeholder="Ex. john.doe@estiam.com" formControlName="email" />
+
+      @if(formGroup.get('email')?.hasError('required')){
+      <mat-error>Email is mandatory</mat-error>
+      } @else if(formGroup.get('email')?.hasError('pattern')){
+      <mat-error>Email is malformed</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input matInput type="password" formControlName="password" />
+      <mat-error>Password is mandatory</mat-error>
+    </mat-form-field>
+
+    <div class="d-flex justify-content-between">
+      <div class="d-flex">
+        <button matButton="filled" type="submit" [disabled]="!formGroup.valid">Login</button>
+        <a matButton="outlined" routerLink="/sign-in" class="ms-2">Sign in</a>
+      </div>
+      <span>Forgot your password ?</span>
+    </div>
+  </form>
+</div>

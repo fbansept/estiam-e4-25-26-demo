@@ -1,0 +1,51 @@
+<div class="row-cols-1 row-cols-md-2 row-cols-xl-4 m-3">
+  <h2>Login</h2>
+
+  <form class="d-flex flex-column gap-2" [formGroup]="formGroup">
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput placeholder="Ex. john.doe@estiam.com" formControlName="email" />
+
+      @if(formGroup.get('email')?.hasError('required')){
+      <mat-error>Email is mandatory</mat-error>
+      } @else if(formGroup.get('email')?.hasError('pattern')){
+      <mat-error>Email is malformed</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input matInput type="password" formControlName="password" (keyup)="onChangePassword()" />
+      <mat-error>Password is mandatory</mat-error>
+    </mat-form-field>
+
+    <app-password-validation-indicator
+      [text]="minPasswordLength + ' digit min'"
+      [valid]="passwordMinLengthValid"
+    />
+    <app-password-validation-indicator
+      text="1 uppercase digit"
+      [valid]="passwordHasUppercaseValid"
+    />
+    <app-password-validation-indicator
+      text="1 lowercase digit"
+      [valid]="passwordHasLowercaseValid"
+    />
+    <app-password-validation-indicator text=" special digit" [valid]="passwordHasSpecialValid" />
+
+    <!-- <div class="d-flex gap-1 align-items-center">
+      <mat-icon fontIcon="cancel" /><span>10 digit min</span>
+    </div>
+    <div class="d-flex gap-1 align-items-center">
+      <mat-icon fontIcon="check_circle" /><span>1 uppercase digit</span>
+    </div>
+    <div class="d-flex gap-1 align-items-center">
+      <mat-icon fontIcon="cancel" /><span>1 lowercase digit</span>
+    </div>
+    <div class="d-flex gap-1 align-items-center">
+      <mat-icon fontIcon="check_circle" /><span>1 special digit</span>
+    </div> -->
+
+    <button matButton="filled" type="submit" [disabled]="!formGroup.valid">Create account</button>
+  </form>
+</div>
