@@ -20,7 +20,7 @@
   <h3>Search history</h3>
 
   <mat-accordion multi>
-    @for (item of history; track $index) {
+    @for (item of historyLineService.history$ | async; track $index) {
 
       <mat-expansion-panel>
         <mat-expansion-panel-header>

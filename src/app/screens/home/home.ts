@@ -1,4 +1,4 @@
-import {DatePipe, NgOptimizedImage} from '@angular/common';
+import {AsyncPipe, DatePipe, NgOptimizedImage} from '@angular/common';
 import {Component, inject, OnInit} from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,6 +7,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { MatInputModule } from '@angular/material/input';
 import {HistoryLine} from '@app/models/history-line';
 import {HttpClient} from '@angular/common/http';
+import {HistoryLineService} from '@app/services/history-line';
+import {ScrapService} from '@app/services/scrap';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +20,7 @@ import {HttpClient} from '@angular/common/http';
     MatIconModule,
     FormsModule,
     ReactiveFormsModule,
-    NgOptimizedImage,
+    AsyncPipe
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -28,26 +30,29 @@ export class Home implements OnInit {
   formGroup = this.formBuilder.group({
     search: ['', [Validators.required]],
   });
-  http = inject(HttpClient);
-  history: HistoryLine[] = []
+  historyLineService = inject(HistoryLineService);
+  scrapService = inject(ScrapService);
 
   ngOnInit() {
     this.refresh()
   }
 
   refresh () {
-    this.http
-      .get<HistoryLine[]>("http://localhost:8080/api/history/list")
-      .subscribe(historyLines => this.history = historyLines);
+    this.historyLineService
+      .list()
+      .subscribe();
   }
 
   onScrap() {
-   if(this.formGroup.valid) {
-     this.http
-       .post("http://localhost:8080/api/scrap", this.formGroup.value)
-       .subscribe(historyLine => this.refresh());
+   if(this.formGroup.valid && this.formGroup.value.search) {
+     this.scrapService
+       .scrap(this.formGroup.value.search)
+       .subscribe({
+         next: r => notificationService.show("I found X result !", "valid"), //notification en vert
+         error: e => notificationService.show("Some issues append :( ", "error") //notification en rouge
+         //le system de notification est dans un service, qui utilise le service MatSnackBar
+         //la notification dure toujours 5 secondes.
+       });
    }
   }
-
-
 }
